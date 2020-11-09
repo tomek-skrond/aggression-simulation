@@ -3,7 +3,7 @@ from numpy.random import *
 import random
 import pprint
 
-pp = pprint.PrettyPrinter(indent=1)
+pp = pprint.PrettyPrinter(indent=2)
 
 class Sample:
 	def __init__(self,hostility,repr_rate,is_alive):
@@ -18,8 +18,8 @@ class Simulation:
 		self.num_of_samples_single = num_of_samples - self.num_of_samples_conf
 		self.samples = self.generateSamples(self.num_of_samples_conf,self.num_of_samples_single,hostility_factor)
 		#print(pp.pprint(self.samples))
-		self.batches = self.generateBatches(self.samples)
-		print(pp.pprint(self.batches))
+		#self.batches = self.generateBatches(self.samples)
+		#print(pp.pprint(self.batches))
 
 
 	def generateSamples(self,num_of_samples_confronting,num_of_samples_single,hostility_factor):
@@ -36,7 +36,7 @@ class Simulation:
 		hostile_sample = Sample(1,1,1)
 		friendly_sample = Sample(0,1,1)
 
-		print(num_of_samples,num_of_samples_single,num_of_samples_confronting,sep=" ")
+		print(f"number of samples: {num_of_samples}  \nnumber of singular samples: {num_of_samples_single} \nnumber of paired samples: {num_of_samples_confronting}")
 
 		for hostile in range(hostile_samples_num):
 			samples_array.append(hostile_sample)
@@ -44,11 +44,15 @@ class Simulation:
 		for friendly in range(hostile_samples_num):
 			samples_array.append(friendly_sample)
 		
+		samples_array = self.generateBatches(samples_array)
+
 		for neutral in range(num_of_samples_single):
 			neutral_sample = Sample(randint(0,2),1,1)
 			samples_array.append(neutral_sample)
 
 		random.shuffle(samples_array)
+
+		pp.pprint(samples_array)
 
 		return samples_array
 
@@ -56,19 +60,40 @@ class Simulation:
 		return [samples[i:i + batch_size] for i in range(0, len(samples), batch_size)]
 
 	def sampleInteraction(self,batch):
-		if (batch[0].hostility == 1 and batch[1].hostility == 0) or (batch[0].hostility == 0 and batch[1].hostility == 1):
-			return 12			
+		first = batch[0]
+		second = batch[1]
+		if (first.hostility == 1 and second.hostility == 0):
+			
+			first.repr_rate = 0.5*randint(1,3)
+			first.is_alive = 1
+
+			second.repr_rate = 0
+			second.is_alive = 0.5*randint(1,3)
+
+
+		if (first.hostility == 0 and second.hostility == 1):
+
+			first.repr_rate = 0.5*randint(1,3)
+			first.is_alive = 1
+
+			second.repr_rate = 0
+			second.is_alive = 0.5*randint(1,3)
+
+
+	def destroySample(self,samples,batch_index,sample_index,samples_num):
+		samples_num -= 1
+		del samples[batch_index][sample_index]
+
+		return samples_num, samples
 
 	def populateSamples(self,batches):
 		return 1
 
-sdf = Simulation(300,2)
+sdf = Simulation(300,100)
 
-'''
-n = 0
-for i in sdf.batches:
-	print(i)
-	n+=1
+print(f"number of samples: {len(sdf.samples)}")
+sdf.destroySample(sdf.samples,)
+print(sdf.samples[1][1])
+print(f"number of samples: {len(sdf.samples)}")
 
-print(n)
-'''
+#pp.pprint(sdf.samples)
