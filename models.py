@@ -14,7 +14,8 @@ class Sample:
 
 class Simulation:
 	def __init__(self,num_of_samples,hostility_factor,nutrition_units=150):
-		self.num_of_samples_conf = randint(0,num_of_samples+1)
+		self.num_of_samples = num_of_samples
+		self.num_of_samples_conf = randint(0,self.num_of_samples+1)
 		self.num_of_samples_single = num_of_samples - self.num_of_samples_conf
 		self.samples = self.generateSamples(self.num_of_samples_conf,self.num_of_samples_single,hostility_factor)
 		#print(pp.pprint(self.samples))
@@ -47,7 +48,7 @@ class Simulation:
 		samples_array = self.generateBatches(samples_array)
 
 		for neutral in range(num_of_samples_single):
-			neutral_sample = Sample(randint(0,2),1,1)
+			neutral_sample = [Sample(randint(0,2),0,0)]
 			samples_array.append(neutral_sample)
 
 		random.shuffle(samples_array)
@@ -63,7 +64,7 @@ class Simulation:
 		first = batch[0]
 		second = batch[1]
 		if (first.hostility == 1 and second.hostility == 0):
-			
+
 			first.repr_rate = 0.5*randint(1,3)
 			first.is_alive = 1
 
@@ -81,19 +82,17 @@ class Simulation:
 
 
 	def destroySample(self,samples,batch_index,sample_index,samples_num):
+
 		samples_num -= 1
 		del samples[batch_index][sample_index]
 
-		return samples_num, samples
-
 	def populateSamples(self,batches):
 		return 1
+num = 300
+sdf = Simulation(3,100)
 
-sdf = Simulation(300,100)
-
-print(f"number of samples: {len(sdf.samples)}")
-sdf.destroySample(sdf.samples,)
-print(sdf.samples[1][1])
-print(f"number of samples: {len(sdf.samples)}")
-
+print(f"number of samples: {num}")
+sdf.destroySample(sdf.samples,0,0,num)
+print(f"number of samples: {num}")
+pp.pprint(sdf.samples)
 #pp.pprint(sdf.samples)
