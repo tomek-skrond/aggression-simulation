@@ -44,7 +44,9 @@ class Simulation:
 
 		for friendly in range(hostile_samples_num):
 			samples_array.append(friendly_sample)
-		
+
+		random.shuffle(samples_array)
+
 		samples_array = self.generateBatches(samples_array)
 
 		for neutral in range(num_of_samples_single):
@@ -80,19 +82,32 @@ class Simulation:
 			second.repr_rate = 0
 			second.is_alive = 0.5*randint(1,3)
 
+	def countSamples(self,samples):
+		n = 0
+		for i in samples:
+			for j in i:
+				n+=1
+		return n
 
 	def destroySample(self,samples,batch_index,sample_index,samples_num):
 
-		samples_num -= 1
+		#samples_num -= 1
 		del samples[batch_index][sample_index]
+
+		return samples_num-1
 
 	def populateSamples(self,batches):
 		return 1
-num = 300
-sdf = Simulation(3,100)
 
-print(f"number of samples: {num}")
-sdf.destroySample(sdf.samples,0,0,num)
-print(f"number of samples: {num}")
+num = 300
+sdf = Simulation(3,10)
+
+print(f"number of sample objects: {sdf.countSamples(sdf.samples)}")
+
+new_num = sdf.destroySample(sdf.samples,0,0,sdf.num_of_samples)
+
+
 pp.pprint(sdf.samples)
 #pp.pprint(sdf.samples)
+
+print(f"number of sample objects: {sdf.countSamples(sdf.samples)}")
